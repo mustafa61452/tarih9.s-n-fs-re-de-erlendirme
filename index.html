@@ -1,18 +1,297 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>9. Sınıf Tarih Performans Ödevi Otomatik Değerlendirme Sistemi</title>
-    <meta name="description" content="9-A, 9-B, 9-C, 9-D ve 9-E sınıfları için MEB 2025-2026 Tarih ders kitabı dereceli puanlama ölçeklerine göre yapay zekâ destekli ödev analizi, otomatik notlandırma ve WhatsApp/E-posta geri bildirim platformu." />
-    <meta property="og:title" content="9. Sınıf Tarih Performans Ödevi Otomatik Değerlendirme Sistemi" />
-    <meta property="og:description" content="9-A, 9-B, 9-C, 9-D ve 9-E sınıfları için MEB 2025-2026 Tarih ders kitabı dereceli puanlama ölçeklerine göre yapay zekâ destekli ödev analizi, otomatik notlandırma ve WhatsApp/E-posta geri bildirim platformu." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9. Sınıf Tarih Dersi Süreç Değerlendirme Sistemi</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- TOAST BİLDİRİMİ -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-emerald-400/40">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i>
+    <span id="toast-text">İşlem başarılı!</span>
+  </div>
+
+  <!-- ÜST MENÜ / HEADER -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40 px-4 lg:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-gradient-to-br from-indigo-500 to-amber-500 rounded-xl shadow-lg">
+          <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-base md:text-lg text-white leading-tight">9. Sınıf Tarih Performans Değerlendirme</h1>
+          <p class="text-xs text-slate-400">MEB 2025-2026 Maarif Modeli • Süreç Odaklı Takip Portalı</p>
+        </div>
+      </div>
+
+      <!-- Sınıf & Rol Seçimi -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
+          <span class="text-slate-400 font-medium">Sınıf:</span>
+          <select id="classSelector" onchange="renderApp()" class="bg-transparent font-bold text-amber-400 focus:outline-none">
+            <option value="ALL" class="bg-slate-900 text-white">Tüm Sınıflar</option>
+            <option value="9-A" class="bg-slate-900 text-white">9-A</option>
+            <option value="9-B" class="bg-slate-900 text-white">9-B</option>
+            <option value="9-C" class="bg-slate-900 text-white">9-C</option>
+            <option value="9-D" class="bg-slate-900 text-white">9-D</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
+          <span class="text-slate-400 font-medium">Rol:</span>
+          <select id="roleSelector" onchange="switchRole(this.value)" class="bg-transparent font-bold text-indigo-400 focus:outline-none">
+            <option value="teacher" class="bg-slate-900 text-white">Öğretmen</option>
+            <option value="student" class="bg-slate-900 text-white">Öğrenci</option>
+            <option value="parent" class="bg-slate-900 text-white">Veli</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ANA İÇERİK -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ÖĞRETMEN PANELİ -->
+    <div id="teacherView" class="space-y-6">
+      <!-- Sekme Düğmeleri -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800 text-xs font-bold">
+        <button onclick="setTab('overview')" id="tab-overview" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-500 text-white bg-slate-800/80">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-indigo-400"></i>
+          <span>Ödev Havuzu & Değerlendirme</span>
+        </button>
+        <button onclick="setTab('rubric')" id="tab-rubric" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white">
+          <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+          <span>MEB Değerlendirme Ölçeği (Rubrik)</span>
+        </button>
+        <button onclick="setTab('eokul')" id="tab-eokul" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white">
+          <i data-lucide="file-spreadsheet" class="w-4 h-4 text-blue-400"></i>
+          <span>e-Okul Not Çizelgesi</span>
+        </button>
+      </div>
+
+      <!-- Alt Sayfa 1: Ödev Havuzu -->
+      <div id="subview-overview" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl">
+            <span class="text-xs text-slate-400">Toplam Kayıtlı Öğrenci</span>
+            <div class="text-2xl font-black text-white mt-1" id="stat-students">0</div>
+          </div>
+          <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl">
+            <span class="text-xs text-slate-400">Teslim Edilen Ödev</span>
+            <div class="text-2xl font-black text-emerald-400 mt-1" id="stat-completed">0</div>
+          </div>
+          <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl">
+            <span class="text-xs text-slate-400">Değerlendirme Bekleyen</span>
+            <div class="text-2xl font-black text-amber-400 mt-1" id="stat-pending">0</div>
+          </div>
+          <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl">
+            <span class="text-xs text-slate-400">Sınıf Başarı Ortalaması</span>
+            <div class="text-2xl font-black text-indigo-400 mt-1" id="stat-avg">0</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+            <h2 class="font-bold text-sm text-white flex items-center gap-2">
+              <i data-lucide="inbox" class="w-4 h-4 text-indigo-400"></i> Öğrenci Ödev ve Süreç Listesi
+            </h2>
+            <button onclick="openNewHomeworkModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Yeni Ödev Girişi
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
+                <tr>
+                  <th class="px-4 py-3">No / Sınıf</th>
+                  <th class="px-4 py-3">Öğrenci Adı</th>
+                  <th class="px-4 py-3">Ödev Konusu</th>
+                  <th class="px-4 py-3">Durum</th>
+                  <th class="px-4 py-3">Puan</th>
+                  <th class="px-4 py-3 text-right">İşlemler</th>
+                </tr>
+              </thead>
+              <tbody id="studentTableBody" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Sayfa 2: Rubrik -->
+      <div id="subview-rubric" class="hidden space-y-4">
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+          <h2 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5 text-amber-400"></i> 9. Sınıf Tarih Dersi Maarif Modeli Performans Ölçeği
+          </h2>
+          <p class="text-xs text-slate-400 mb-6">Öğrencilerin süreç içi performansları MEB kriterlerine göre 5 ana boyutta puanlanmaktadır.</p>
+          <div class="space-y-4">
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-sm text-slate-200">1. Tarihsel Kaynak Analizi ve Eleştiri</h4>
+                <p class="text-xs text-slate-400">Birincil ve ikincil kaynakları ayırt edebilme, güvenilirlik sorgusu yapma.</p>
+              </div>
+              <span class="text-sm font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg">25 Puan</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-sm text-slate-200">2. Neden-Sonuç İlişkisi Kurma</h4>
+                <p class="text-xs text-slate-400">Olayların gelişimini dönemin şartlarına (anakronizme düşmeden) göre bağlama.</p>
+              </div>
+              <span class="text-sm font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg">25 Puan</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-sm text-slate-200">3. Kronolojik Algı ve Mekân Kullanımı</h4>
+                <p class="text-xs text-slate-400">Tarihsel harita ve zaman çizelgelerini doğru yorumlama ve metne aktarma.</p>
+              </div>
+              <span class="text-sm font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg">20 Puan</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-sm text-slate-200">4. Kavram Bilgisi & Terminoloji</h4>
+                <p class="text-xs text-slate-400">Döneme ait kavramları (ör. Kurultay, Kut, Töre, İkta vb.) yerinde kullanma.</p>
+              </div>
+              <span class="text-sm font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg">15 Puan</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 flex justify-between items-center">
+              <div>
+                <h4 class="font-bold text-sm text-slate-200">5. Zaman Yönetimi ve Sunum Tertibi</h4>
+                <p class="text-xs text-slate-400">Ödevin takvime uygun teslim edilmesi, akademik kaynakça ve özgünlük.</p>
+              </div>
+              <span class="text-sm font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg">15 Puan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Sayfa 3: e-Okul Not Çizelgesi -->
+      <div id="subview-eokul" class="hidden space-y-4">
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="file-spreadsheet" class="w-5 h-5 text-blue-400"></i> e-Okul Uyumlu Not Aktarım Listesi
+              </h2>
+              <p class="text-xs text-slate-400">Doğrudan e-okul sistemine girmek üzere hazır puanlama dökümü.</p>
+            </div>
+            <button onclick="window.print()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white text-xs font-bold flex items-center gap-1.5 shadow">
+              <i data-lucide="printer" class="w-4 h-4"></i> Çıktı Al / PDF Kaydet
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                <tr>
+                  <th class="px-4 py-3">Okul No</th>
+                  <th class="px-4 py-3">Adı Soyadı</th>
+                  <th class="px-4 py-3">Sınıfı</th>
+                  <th class="px-4 py-3">1. Süreç Notu</th>
+                  <th class="px-4 py-3">2. Süreç Notu</th>
+                  <th class="px-4 py-3 font-bold text-white">e-Okul Giriş Puanı</th>
+                </tr>
+              </thead>
+              <tbody id="eokulTableBody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÖĞRENCİ PANELİ -->
+    <div id="studentView" class="hidden space-y-6">
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="user" class="w-5 h-5 text-indigo-400"></i> Öğrenci Ödev Teslim Alanı
+        </h2>
+        <p class="text-xs text-slate-400 mb-6">Tarih dersi performans görevinizi metin olarak yazabilir veya dosyanızı gönderebilirsiniz.</p>
+        <div class="space-y-4 max-w-xl">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Adınız Soyadınız & Okul No</label>
+            <input id="stu_name" type="text" placeholder="Örn: Yusuf Ziya Öztürk - 412" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Ödev Konusu</label>
+            <input id="stu_title" type="text" placeholder="Örn: Kavimler Göçü'nün Avrupa Kültürüne Etkileri" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Ödev İçeriği / Özet</label>
+            <textarea id="stu_content" rows="4" placeholder="Ödev metninizi buraya ekleyin..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+          <button onclick="submitStudentHomework()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-amber-600 rounded-xl text-white text-xs font-bold shadow-lg hover:brightness-110">
+            Ödevi Gönder
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VELİ PANELİ -->
+    <div id="parentView" class="hidden space-y-6">
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="heart-handshake" class="w-5 h-5 text-rose-400"></i> Veli Bilgilendirme Portalı
+        </h2>
+        <p class="text-xs text-slate-400 mb-6">Öğrencinizin süreç odaklı ödev takibini ve öğretmen geri bildirimlerini anlık görüntüleyin.</p>
+        <div id="parentList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- DEĞERLENDİRME & PUANLAMA MODALI -->
+  <div id="evalModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white" id="evalModalTitle">Ödevi Puanla</h3>
+        <button onclick="closeEvalModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Verilecek Not (100 Üzerinden)</label>
+        <input id="evalScoreInput" type="number" min="0" max="100" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 font-bold">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Yapıcı Öğretmen Geri Bildirimi</label>
+        <textarea id="evalFeedbackInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500" placeholder="Geliştirilmesi gereken yönler ve tebrik notu..."></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeEvalModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">İptal</button>
+        <button onclick="saveEvaluation()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold text-white shadow">Puanı ve Dönütü Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALT BİLGİ -->
+  <footer class="mt-auto border-t border-slate-800 bg-slate-900/60 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>MEB 2025-2026 9. Sınıf Tarih Dersi Performans Ödevi Değerlendirme & Biçimlendirici Süreç Sistemi</span>
+      <span class="font-mono text-slate-400">9-A • 9-B • 9-C • 9-D</span>
+    </div>
+  </footer>
+
+  <script>
+    // Başlangıç Verileri
+    let students = [
+      { id: '1', no: '102', classRoom: '9-A', name: 'Mustafa Eren Aydemir', phone: '905321112233', title: 'Tarih Yazıcılığının Gelişimi ve Halil İnalcık', status: 'graded', score: 95, feedback: 'Harika bir birincil kaynak araştırması yapılmış. Tebrikler.' },
+      { id: '2', no: '118', classRoom: '9-A', name: 'Ayşe Yılmaz', phone: '905332223344', title: 'Orta Asya Türk Göçlerinin Coğrafi Sebepleri', status: 'pending', score: null, feedback: '' },
+      { id: '3', no: '205', classRoom: '9-B', name: 'Mehmet Ali Kaya', phone: '905353334455', title: 'Kadeş Barış Antlaşması ve Diplomatik Önemi', status: 'graded', score: 85, feedback: 'Metin iyi fakat kronolojik harita eksik kalmış.' },
+      { id: '4', no: '340', classRoom: '9-C', name: 'Zeynep Demir', phone: '905364445566', title: 'İslamiyet Öncesi Türklerde Töre Sistemi', status: 'pending', score: null, feedback: '' },
+      { id: '5', no: '412', classRoom: '9-D', name: 'Emre Can Çelik', phone: '905375556677', title: 'Mezopotamya Medeniyetlerinde Hukuk (Hammurabi)', status: 'graded', score: 90, feedback: 'Kavram analizi son derece başarılı.' }
+    ];
+
+    let currentEvalId = null;
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text
 
