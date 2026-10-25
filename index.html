@@ -6,22 +6,17 @@
   <title>9. Sınıf Tarih Dersi Süreç Değerlendirme Sistemi</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    .font-mono { font-family: 'JetBrains Mono', monospace; }
-  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
 
   <!-- BİLDİRİM KUTUSU (TOAST) -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 border border-emerald-400/40">
-    <span class="text-base">✓</span>
+    <span class="text-sm font-bold">✓</span>
     <span id="toast-text">İşlem başarılı!</span>
   </div>
 
   <!-- ÜST MENÜ / HEADER -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40 px-4 lg:px-8 py-3.5">
+  <header class="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-40 px-4 lg:px-8 py-3.5">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <div class="p-2.5 bg-gradient-to-br from-indigo-500 to-amber-500 rounded-xl shadow-lg text-white font-bold text-lg">
@@ -35,9 +30,9 @@
 
       <!-- Sınıf & Rol Seçimi -->
       <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
+        <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
           <span class="text-slate-400 font-medium">Sınıf:</span>
-          <select id="classSelector" class="bg-transparent font-bold text-amber-400 focus:outline-none cursor-pointer">
+          <select id="classSelector" onchange="renderApp()" class="bg-transparent font-bold text-amber-400 focus:outline-none cursor-pointer">
             <option value="ALL" class="bg-slate-900 text-white">Tüm Sınıflar</option>
             <option value="9-A" class="bg-slate-900 text-white">9-A</option>
             <option value="9-B" class="bg-slate-900 text-white">9-B</option>
@@ -46,9 +41,9 @@
           </select>
         </div>
 
-        <div class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
+        <div class="flex items-center gap-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
           <span class="text-slate-400 font-medium">Rol:</span>
-          <select id="roleSelector" class="bg-transparent font-bold text-indigo-400 focus:outline-none cursor-pointer">
+          <select id="roleSelector" onchange="switchRole(this.value)" class="bg-transparent font-bold text-indigo-400 focus:outline-none cursor-pointer">
             <option value="teacher" class="bg-slate-900 text-white">Öğretmen</option>
             <option value="student" class="bg-slate-900 text-white">Öğrenci</option>
             <option value="parent" class="bg-slate-900 text-white">Veli</option>
@@ -65,13 +60,13 @@
     <div id="teacherView" class="space-y-6">
       <!-- Sekme Düğmeleri -->
       <div class="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800 text-xs font-bold">
-        <button id="tabBtn-overview" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-500 text-white bg-slate-800/80 cursor-pointer">
+        <button onclick="setTab('overview')" id="tabBtn-overview" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-500 text-white bg-slate-800/80 cursor-pointer">
           📊 <span>Ödev Havuzu & Değerlendirme</span>
         </button>
-        <button id="tabBtn-rubric" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer">
+        <button onclick="setTab('rubric')" id="tabBtn-rubric" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer">
           🎯 <span>MEB Değerlendirme Ölçeği (Rubrik)</span>
         </button>
-        <button id="tabBtn-eokul" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer">
+        <button onclick="setTab('eokul')" id="tabBtn-eokul" class="flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer">
           📋 <span>e-Okul Not Çizelgesi</span>
         </button>
       </div>
@@ -102,7 +97,7 @@
             <h2 class="font-bold text-sm text-white flex items-center gap-2">
               📝 Öğrenci Ödev ve Süreç Değerlendirme Listesi
             </h2>
-            <button id="btnNewHomework" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer">
+            <button onclick="addNewStudentPrompt()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1 cursor-pointer">
               + Yeni Ödev Kaydı
             </button>
           </div>
@@ -170,4 +165,93 @@
       </div>
 
       <!-- Alt Sekme: e-Okul Not Çizelgesi -->
-      <div id="subview
+      <div id="subview-eokul" class="hidden space-y-4">
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">📋 e-Okul Uyumlu Not Aktarım Listesi</h2>
+              <p class="text-xs text-slate-400">Doğrudan e-okul sistemine girmek üzere hazır puanlama dökümü.</p>
+            </div>
+            <button onclick="window.print()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer">
+              🖨️ Çıktı Al / PDF Kaydet
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950 text-slate-400 border-b border-slate-800">
+                <tr>
+                  <th class="px-4 py-3">Okul No</th>
+                  <th class="px-4 py-3">Adı Soyadı</th>
+                  <th class="px-4 py-3">Sınıfı</th>
+                  <th class="px-4 py-3">1. Süreç Notu</th>
+                  <th class="px-4 py-3">2. Süreç Notu</th>
+                  <th class="px-4 py-3 font-bold text-white">e-Okul Giriş Puanı</th>
+                </tr>
+              </thead>
+              <tbody id="eokulTableBody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ÖĞRENCİ PANELİ -->
+    <div id="studentView" class="hidden space-y-6">
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-lg font-bold text-white mb-2">👤 Öğrenci Ödev Teslim Alanı</h2>
+        <p class="text-xs text-slate-400 mb-6">Tarih dersi performans görevinizi metin olarak yazabilir veya gönderebilirsiniz.</p>
+        <div class="space-y-4 max-w-xl">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Adınız Soyadınız & Okul No</label>
+            <input id="stu_name" type="text" placeholder="Örn: Yusuf Ziya Öztürk - 412" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Ödev Konusu</label>
+            <input id="stu_title" type="text" placeholder="Örn: Kavimler Göçü'nün Avrupa Kültürüne Etkileri" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Ödev İçeriği / Özet Metin</label>
+            <textarea id="stu_content" rows="4" placeholder="Ödev metninizi buraya ekleyin..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+          <button onclick="submitStudentHomework()" class="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-amber-600 rounded-xl text-white text-xs font-bold shadow-lg hover:brightness-110 cursor-pointer">
+            Ödevi Öğretmene Gönder
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. VELİ PANELİ -->
+    <div id="parentView" class="hidden space-y-6">
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-lg font-bold text-white mb-2">🤝 Veli Bilgilendirme Portalı</h2>
+        <p class="text-xs text-slate-400 mb-6">Öğrencinizin süreç odaklı ödev takibini ve öğretmen değerlendirmelerini anlık takip edin.</p>
+        <div id="parentList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- DEĞERLENDİRME & PUANLAMA MODALI -->
+  <div id="evalModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white" id="evalModalTitle">Ödevi Puanla</h3>
+        <button onclick="closeEvalModal()" class="text-slate-400 hover:text-white font-bold text-lg cursor-pointer">✕</button>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Verilecek Not (100 Üzerinden)</label>
+        <input id="evalScoreInput" type="number" min="0" max="100" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 font-bold" placeholder="Örn: 90">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1">Yapıcı Öğretmen Geri Bildirimi</label>
+        <textarea id="evalFeedbackInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500" placeholder="Örn: Kaynak analizi çok başarılı, harita kullanımı geliştirilebilir."></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeEvalModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 cursor-pointer">İptal</button>
+        <button onclick="saveEvaluation()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold text-white shadow cursor-pointer">Puanı ve Dönütü Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALT BİLGİ -->
+  <footer class="mt-auto border-t border-slate-800 bg-slate-90
