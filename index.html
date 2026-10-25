@@ -120,7 +120,7 @@
   <!-- ANA ALAN -->
   <div class="container">
 
-    <!-- ================== 1. ÖĞRETMEN PORTALİ ================== -->
+    <!-- 1. ÖĞRETMEN PORTALİ -->
     <div id="section-teacher">
       <div class="tab-bar">
         <button class="tab-item active" id="tb-overview" onclick="showSubTab('overview')">📊 Ödev Havuzu & Takip</button>
@@ -310,7 +310,7 @@
       </div>
     </div>
 
-    <!-- ================== 2. ÖĞRENCİ PORTALİ ================== -->
+    <!-- 2. ÖĞRENCİ PORTALİ -->
     <div id="section-student" style="display:none;">
       <div class="panel-card" style="padding:24px; max-width:650px;">
         <h3 style="margin-bottom:8px;">👤 Öğrenci Performans Görevi Gönderim Alanı</h3>
@@ -340,7 +340,7 @@
       </div>
     </div>
 
-    <!-- ================== 3. VELİ PORTALİ ================== -->
+    <!-- 3. VELİ PORTALİ -->
     <div id="section-parent" style="display:none;">
       <div class="panel-card" style="padding:24px;">
         <h3 style="margin-bottom:8px;">🤝 Veli Bilgilendirme ve Süreç Takip Portalı</h3>
@@ -349,7 +349,7 @@
       </div>
     </div>
 
-    <!-- ================== 4. REHBERLİK (PDR) PORTALİ ================== -->
+    <!-- 4. REHBERLİK (PDR) PORTALİ -->
     <div id="section-counselor" style="display:none;">
       <div class="panel-card" style="padding:24px;">
         <div class="card-top" style="padding:0 0 16px 0;">
@@ -422,7 +422,6 @@
 
   <!-- ÇALIŞTIRICI JAVASCRIPT KODLARI -->
   <script>
-    // Başlangıç Verileri
     var studentsData = [
       { id: "s1", no: "102", classRoom: "9-A", name: "Mustafa Eren Aydemir", phone: "905321112233", title: "Tarih Yazıcılığı ve Metodolojisi", status: "graded", score: 95, feedback: "Birincil ve ikincil kaynak ayrımı çok başarılı." },
       { id: "s2", no: "118", classRoom: "9-A", name: "Ayşe Yılmaz", phone: "905332223344", title: "Orta Asya Türk Göçlerinin Coğrafi Sebepleri", status: "pending", score: null, feedback: "" },
@@ -494,7 +493,6 @@
       document.getElementById("numPending").innerText = pendingCount;
       document.getElementById("numAverage").innerText = gradedCount > 0 ? (sumScore / gradedCount).toFixed(1) : "0";
 
-      // Tabloyu Yaz
       var tb = document.getElementById("homeworkTableBody");
       var html = "";
       for (var k = 0; k < filtered.length; k++) {
@@ -513,7 +511,6 @@
       }
       tb.innerHTML = html;
 
-      // e-Okul Tablosu
       var etb = document.getElementById("eokulRecordsBody");
       var ehtml = "";
       for (var m = 0; m < filtered.length; m++) {
@@ -529,7 +526,6 @@
       }
       etb.innerHTML = ehtml;
 
-      // Yapay Zeka Öğrenci Seçicisi
       var aiSel = document.getElementById("aiSelectStudent");
       var aiOptions = "";
       for (var a = 0; a < filtered.length; a++) {
