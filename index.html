@@ -254,4 +254,246 @@
   </div>
 
   <!-- ALT BİLGİ -->
-  <footer class="mt-auto border-t border-slate-800 bg-slate-90
+  <footer class="mt-auto border-t border-slate-800 bg-slate-900/60 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>MEB 2025-2026 9. Sınıf Tarih Dersi Performans Ödevi Değerlendirme & Biçimlendirici Süreç Sistemi</span>
+      <span class="font-mono text-slate-400">9-A • 9-B • 9-C • 9-D</span>
+    </div>
+  </footer>
+
+  <!-- TÜM JAVASCRIPT ÇALIŞTIRICILARI -->
+  <script>
+    var students = [
+      { id: '1', no: '102', classRoom: '9-A', name: 'Mustafa Eren Aydemir', phone: '905321112233', title: 'Tarih Yazıcılığının Gelişimi ve Halil İnalcık', status: 'graded', score: 95, feedback: 'Harika bir birincil kaynak araştırması yapılmış. Tebrikler.' },
+      { id: '2', no: '118', classRoom: '9-A', name: 'Ayşe Yılmaz', phone: '905332223344', title: 'Orta Asya Türk Göçlerinin Coğrafi Sebepleri', status: 'pending', score: null, feedback: '' },
+      { id: '3', no: '205', classRoom: '9-B', name: 'Mehmet Ali Kaya', phone: '905353334455', title: 'Kadeş Barış Antlaşması ve Diplomatik Önemi', status: 'graded', score: 85, feedback: 'Metin iyi fakat kronolojik harita eksik kalmış.' },
+      { id: '4', no: '340', classRoom: '9-C', name: 'Zeynep Demir', phone: '905364445566', title: 'İslamiyet Öncesi Türklerde Töre Sistemi', status: 'pending', score: null, feedback: '' },
+      { id: '5', no: '412', classRoom: '9-D', name: 'Emre Can Çelik', phone: '905375556677', title: 'Mezopotamya Medeniyetlerinde Hukuk (Hammurabi)', status: 'graded', score: 90, feedback: 'Kavram analizi son derece başarılı.' }
+    ];
+
+    var currentEvalId = null;
+
+    function showToast(msg) {
+      var toast = document.getElementById('toast');
+      var text = document.getElementById('toast-text');
+      if (toast && text) {
+        text.innerText = msg;
+        toast.classList.remove('hidden');
+        setTimeout(function() { toast.classList.add('hidden'); }, 3500);
+      }
+    }
+
+    function switchRole(role) {
+      document.getElementById('teacherView').classList.add('hidden');
+      document.getElementById('studentView').classList.add('hidden');
+      document.getElementById('parentView').classList.add('hidden');
+
+      if (role === 'teacher') document.getElementById('teacherView').classList.remove('hidden');
+      if (role === 'student') document.getElementById('studentView').classList.remove('hidden');
+      if (role === 'parent') {
+        document.getElementById('parentView').classList.remove('hidden');
+        renderParentPortal();
+      }
+    }
+
+    function setTab(tab) {
+      var tabs = ['overview', 'rubric', 'eokul'];
+      for (var i = 0; i < tabs.length; i++) {
+        var t = tabs[i];
+        document.getElementById('subview-' + t).classList.add('hidden');
+        document.getElementById('tabBtn-' + t).className = 'flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-slate-400 hover:text-white cursor-pointer';
+      }
+      document.getElementById('subview-' + tab).classList.remove('hidden');
+      document.getElementById('tabBtn-' + tab).className = 'flex items-center gap-2 px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-500 text-white bg-slate-800/80 cursor-pointer';
+    }
+
+    function openEvalModal(id) {
+      var s = null;
+      for (var i = 0; i < students.length; i++) {
+        if (students[i].id === String(id)) {
+          s = students[i];
+          break;
+        }
+      }
+      if (!s) return;
+      currentEvalId = String(id);
+      document.getElementById('evalModalTitle').innerText = s.name + ' - Ödevini Değerlendir';
+      document.getElementById('evalScoreInput').value = s.score !== null ? s.score : '';
+      document.getElementById('evalFeedbackInput').value = s.feedback || '';
+      document.getElementById('evalModal').classList.remove('hidden');
+    }
+
+    function closeEvalModal() {
+      document.getElementById('evalModal').classList.add('hidden');
+    }
+
+    function sendWhatsApp(phone, name, score, feedback) {
+      var msg = 'Sayın Velimiz, 9. Sınıf öğrencimiz ' + name + '\'in Tarih Dersi Performans görevi değerlendirilmiştir.\nNotu: ' + score + '/100\nÖğretmen Değerlendirmesi: ' + (feedback || 'Başarılı bir çalışma.');
+      var url = 'https://api.whatsapp.com/send?phone=' + phone + '&text=' + encodeURIComponent(msg);
+      window.open(url, '_blank');
+      showToast(name + ' velisi için WhatsApp mesajı oluşturuldu.');
+    }
+
+    function saveEvaluation() {
+      var scoreVal = document.getElementById('evalScoreInput').value;
+      var feedbackVal = document.getElementById('evalFeedbackInput').value;
+      if (scoreVal === '' || isNaN(scoreVal) || Number(scoreVal) < 0 || Number(scoreVal) > 100) {
+        alert('Lütfen 0 ile 100 arasında geçerli bir puan girin.');
+        return;
+      }
+      for (var i = 0; i < students.length; i++) {
+        if (students[i].id === currentEvalId) {
+          students[i].score = Number(scoreVal);
+          students[i].feedback = feedbackVal;
+          students[i].status = 'graded';
+          showToast(students[i].name + ' için not ve dönüt kaydedildi!');
+          break;
+        }
+      }
+      closeEvalModal();
+      renderApp();
+    }
+
+    function addNewStudentPrompt() {
+      var ad = prompt('Öğrenci Adı Soyadı:');
+      if (!ad) return;
+      var no = prompt('Okul Numarası:', '150');
+      var konu = prompt('Ödev Konusu:', 'Tarih Bilimine Giriş');
+      students.unshift({
+        id: String(Date.now()),
+        no: no || '0',
+        classRoom: '9-A',
+        name: ad,
+        phone: '905551234567',
+        title: konu || 'Performans Görevi',
+        status: 'pending',
+        score: null,
+        feedback: ''
+      });
+      showToast(ad + ' sisteme eklendi!');
+      renderApp();
+    }
+
+    function submitStudentHomework() {
+      var name = document.getElementById('stu_name').value.trim();
+      var title = document.getElementById('stu_title').value.trim();
+      if (!name || !title) {
+        alert('Lütfen adınızı ve ödev konusunu yazınız.');
+        return;
+      }
+      students.unshift({
+        id: String(Date.now()),
+        no: '999',
+        classRoom: '9-A',
+        name: name,
+        phone: '905551234567',
+        title: title,
+        status: 'pending',
+        score: null,
+        feedback: ''
+      });
+      showToast('Ödeviniz başarıyla gönderildi!');
+      document.getElementById('stu_name').value = '';
+      document.getElementById('stu_title').value = '';
+      document.getElementById('stu_content').value = '';
+      switchRole('teacher');
+      document.getElementById('roleSelector').value = 'teacher';
+      renderApp();
+    }
+
+    function renderParentPortal() {
+      var parentList = document.getElementById('parentList');
+      var html = '';
+      for (var i = 0; i < students.length; i++) {
+        var s = students[i];
+        html += '<div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">' +
+          '<div class="flex justify-between items-start">' +
+            '<div>' +
+              '<h4 class="font-bold text-white text-sm">' + s.name + '</h4>' +
+              '<span class="text-xs text-slate-400">No: ' + s.no + ' • Sınıf: ' + s.classRoom + '</span>' +
+            '</div>' +
+            (s.status === 'graded' 
+              ? '<span class="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold rounded-lg text-xs">' + s.score + ' Puan</span>'
+              : '<span class="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold rounded-lg text-xs">Değerlendirme Bekliyor</span>'
+            ) +
+          '</div>' +
+          '<p class="text-xs text-slate-300 font-medium">' + s.title + '</p>' +
+          (s.feedback ? '<div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-amber-300"><strong>Öğretmen Dönütü:</strong> ' + s.feedback + '</div>' : '') +
+        '</div>';
+      }
+      parentList.innerHTML = html;
+    }
+
+    function renderApp() {
+      var selectedClass = document.getElementById('classSelector').value;
+      var filtered = [];
+      for (var i = 0; i < students.length; i++) {
+        if (selectedClass === 'ALL' || students[i].classRoom === selectedClass) {
+          filtered.push(students[i]);
+        }
+      }
+
+      var completedCount = 0;
+      var pendingCount = 0;
+      var totalScore = 0;
+
+      for (var j = 0; j < filtered.length; j++) {
+        if (filtered[j].status === 'graded') {
+          completedCount++;
+          totalScore += filtered[j].score;
+        } else {
+          pendingCount++;
+        }
+      }
+
+      var avg = completedCount > 0 ? (totalScore / completedCount).toFixed(1) : '0';
+
+      document.getElementById('stat-students').innerText = filtered.length;
+      document.getElementById('stat-completed').innerText = completedCount;
+      document.getElementById('stat-pending').innerText = pendingCount;
+      document.getElementById('stat-avg').innerText = avg;
+
+      var tbody = document.getElementById('studentTableBody');
+      var rowsHtml = '';
+      for (var k = 0; k < filtered.length; k++) {
+        var s = filtered[k];
+        rowsHtml += '<tr class="hover:bg-slate-800/40 transition">' +
+          '<td class="px-4 py-3 font-mono text-slate-400">' + s.no + ' <span class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">' + s.classRoom + '</span></td>' +
+          '<td class="px-4 py-3 font-bold text-slate-100">' + s.name + '</td>' +
+          '<td class="px-4 py-3 text-slate-300">' + s.title + '</td>' +
+          '<td class="px-4 py-3">' +
+            (s.status === 'graded' 
+              ? '<span class="inline-flex items-center text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full font-bold text-[10px]">✓ Puanlandı</span>'
+              : '<span class="inline-flex items-center text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full font-bold text-[10px]">⏳ İnceleniyor</span>'
+            ) +
+          '</td>' +
+          '<td class="px-4 py-3 font-mono font-bold ' + (s.score !== null ? 'text-amber-400 text-sm' : 'text-slate-500') + '">' + (s.score !== null ? s.score : '-') + '</td>' +
+          '<td class="px-4 py-3 text-right space-x-1">' +
+            '<button onclick="openEvalModal(\'' + s.id + '\')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-[11px] cursor-pointer">✏️ Puanla</button>' +
+            '<button onclick="sendWhatsApp(\'' + s.phone + '\', \'' + s.name + '\', \'' + (s.score !== null ? s.score : 'Girilmedi') + '\', \'' + (s.feedback || '') + '\')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] cursor-pointer">💬 WhatsApp</button>' +
+          '</td>' +
+        '</tr>';
+      }
+      tbody.innerHTML = rowsHtml;
+
+      var eokulBody = document.getElementById('eokulTableBody');
+      var eokulHtml = '';
+      for (var m = 0; m < filtered.length; m++) {
+        var item = filtered[m];
+        eokulHtml += '<tr class="hover:bg-slate-800/30">' +
+          '<td class="px-4 py-3 font-mono text-slate-300 font-bold">' + item.no + '</td>' +
+          '<td class="px-4 py-3 text-slate-100">' + item.name + '</td>' +
+          '<td class="px-4 py-3 text-slate-400">' + item.classRoom + '</td>' +
+          '<td class="px-4 py-3 font-mono">' + (item.score !== null ? item.score : '-') + '</td>' +
+          '<td class="px-4 py-3 font-mono">' + (item.score !== null ? Math.min(100, item.score + 5) : '-') + '</td>' +
+          '<td class="px-4 py-3 font-mono font-bold text-amber-400 text-sm">' + (item.score !== null ? item.score : 'Girilmedi') + '</td>' +
+        '</tr>';
+      }
+      eokulBody.innerHTML = eokulHtml;
+    }
+
+    // Doğrudan sayfayı başlat
+    renderApp();
+  </script>
+</body>
+</html>
