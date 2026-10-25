@@ -3,285 +3,699 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>9. Sınıf Tarih Performans Değerlendirme</title>
+  <title>9. Sınıf Tarih Dersi Süreç Değerlendirme & Takip Sistemi</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #090d16; color: #f1f5f9; padding: 20px; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    
-    /* Header */
-    header { background: #131c2e; border: 1px solid #1e293b; border-radius: 12px; padding: 16px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; }
-    h1 { font-size: 18px; color: #fff; margin-bottom: 4px; }
-    p.sub { font-size: 12px; color: #94a3b8; }
-    
-    .selectors { display: flex; gap: 10px; align-items: center; }
-    select { background: #090d16; color: #f59e0b; border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; outline: none; }
-    select.role-sel { color: #818cf8; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { background-color: #0b1120; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
+    .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 20px 16px; flex: 1; }
 
-    /* Navigasyon Sekmeleri */
-    .nav-tabs { display: flex; gap: 8px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; overflow-x: auto; }
-    .tab-btn { background: none; border: none; padding: 10px 16px; color: #94a3b8; font-size: 13px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; }
-    .tab-btn.active { color: #fff; border-bottom: 3px solid #6366f1; background: #131c2e; border-top-left-radius: 8px; border-top-right-radius: 8px; }
+    /* Üst Başlık (Header) */
+    header { background: #131d33; border-bottom: 1px solid #1e293b; padding: 16px 24px; position: sticky; top: 0; z-index: 40; }
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #6366f1, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .brand h1 { font-size: 18px; font-weight: 700; color: #fff; }
+    .brand p { font-size: 12px; color: #94a3b8; }
+    .header-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+    /* Butonlar & Seçiciler */
+    select { background: #0b1120; color: #f59e0b; border: 1px solid #334155; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; outline: none; }
+    select.role-select { color: #818cf8; }
+    .btn { padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; outline: none; transition: 0.15s ease; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-indigo { background: #4f46e5; color: #fff; }
+    .btn-indigo:hover { background: #4338ca; }
+    .btn-emerald { background: #059669; color: #fff; }
+    .btn-emerald:hover { background: #047857; }
+    .btn-amber { background: #d97706; color: #fff; }
+    .btn-amber:hover { background: #b45309; }
+    .btn-slate { background: #1e293b; color: #cbd5e1; border: 1px solid #334155; }
+    .btn-slate:hover { background: #334155; color: #fff; }
+
+    /* Sekmeler */
+    .tab-bar { display: flex; gap: 6px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; overflow-x: auto; padding-bottom: 2px; }
+    .tab-item { background: transparent; border: none; border-bottom: 3px solid transparent; color: #94a3b8; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .tab-item.active { color: #fff; border-bottom-color: #6366f1; background: #131d33; border-top-left-radius: 8px; border-top-right-radius: 8px; }
 
     /* İstatistik Kartları */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .stat-card { background: #131c2e; border: 1px solid #1e293b; padding: 16px; border-radius: 12px; }
-    .stat-title { font-size: 12px; color: #94a3b8; }
-    .stat-val { font-size: 24px; font-weight: 800; margin-top: 6px; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .stat-box { background: #131d33; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; }
+    .stat-label { font-size: 12px; color: #94a3b8; font-weight: 500; }
+    .stat-num { font-size: 26px; font-weight: 800; margin-top: 4px; }
 
-    /* Tablo */
-    .table-container { background: #131c2e; border: 1px solid #1e293b; border-radius: 12px; overflow: hidden; }
-    .table-header { padding: 16px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+    /* Tablolar */
+    .panel-card { background: #131d33; border: 1px solid #1e293b; border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+    .card-top { padding: 16px 20px; border-bottom: 1px solid #1e293b; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+    .card-top h3 { font-size: 15px; font-weight: 700; color: #fff; }
+    .table-responsive { width: 100%; overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-    th { background: #090d16; color: #94a3b8; padding: 12px 16px; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #1e293b; }
+    th { background: #0b1120; color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 16px; border-bottom: 1px solid #1e293b; font-weight: 600; }
     td { padding: 14px 16px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
-    tr:hover { background: #1e293b40; }
+    tr:hover td { background: rgba(30, 41, 59, 0.4); }
 
-    /* Düğmeler ve Rozetler */
-    .btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; outline: none; transition: 0.2s; }
-    .btn-primary { background: #4f46e5; color: #fff; }
-    .btn-primary:hover { background: #4338ca; }
-    .btn-success { background: #059669; color: #fff; }
-    .btn-success:hover { background: #047857; }
-    .btn-action { margin-right: 5px; }
+    /* Rozetler */
+    .badge { padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; display: inline-block; }
+    .badge-done { background: rgba(5, 150, 105, 0.2); color: #34d399; border: 1px solid rgba(5, 150, 105, 0.4); }
+    .badge-wait { background: rgba(217, 119, 6, 0.2); color: #fbbf24; border: 1px solid rgba(217, 119, 6, 0.4); }
 
-    .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
-    .badge-ok { background: #064e3b; color: #34d399; }
-    .badge-wait { background: #78350f; color: #fbbf24; }
+    /* Form Girişleri */
+    .form-field { margin-bottom: 14px; }
+    .form-field label { display: block; font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 6px; }
+    .form-field input, .form-field textarea, .form-field select { width: 100%; background: #0b1120; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 13px; outline: none; }
+    .form-field input:focus, .form-field textarea:focus { border-color: #6366f1; }
+
+    /* Bildirim Toast */
+    #toastNotice { position: fixed; bottom: 20px; right: 20px; z-index: 100; background: #059669; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: none; }
 
     /* Modallar */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
-    .modal-box { background: #131c2e; border: 1px solid #334155; border-radius: 12px; width: 90%; max-width: 500px; padding: 20px; }
-    .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 12px; margin-bottom: 6px; color: #94a3b8; }
-    .form-group input, .form-group textarea { width: 100%; background: #090d16; border: 1px solid #334155; border-radius: 8px; padding: 10px; color: #fff; font-size: 13px; }
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); display: none; align-items: center; justify-content: center; z-index: 90; padding: 16px; }
+    .modal-content { background: #131d33; border: 1px solid #334155; border-radius: 14px; width: 100%; max-width: 520px; padding: 22px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
+    .modal-header h4 { font-size: 16px; font-weight: 700; color: #fff; }
+
+    /* Kart Izgaraları */
+    .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .content-box { background: #0b1120; border: 1px solid #1e293b; border-radius: 10px; padding: 14px; }
+
+    footer { background: #0b1120; border-top: 1px solid #1e293b; padding: 16px 20px; text-align: center; font-size: 12px; color: #64748b; }
   </style>
 </head>
 <body>
 
+  <!-- BİLDİRİM TOAST -->
+  <div id="toastNotice">İşlem başarıyla tamamlandı.</div>
+
+  <!-- ÜST MENÜ -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🏛️</div>
+        <div>
+          <h1>9. Sınıf Tarih Performans Değerlendirme</h1>
+          <p>MEB Türkiye Yüzyılı Maarif Modeli • Süreç Odaklı Ölçme & Takip Portalı</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button class="btn btn-slate" onclick="openModal('modalTextbook')">📖 Ders Kitabı & Müfredat</button>
+        <div>
+          <select id="mainClassSelect" onchange="runFilter()">
+            <option value="ALL">Tüm Şubeler</option>
+            <option value="9-A">9-A Şubesi</option>
+            <option value="9-B">9-B Şubesi</option>
+            <option value="9-C">9-C Şubesi</option>
+            <option value="9-D">9-D Şubesi</option>
+          </select>
+        </div>
+        <div>
+          <select id="mainRoleSelect" class="role-select" onchange="changeRole(this.value)">
+            <option value="teacher">Öğretmen Portalı</option>
+            <option value="student">Öğrenci Portalı</option>
+            <option value="parent">Veli Portalı</option>
+            <option value="counselor">Rehberlik (PDR) Takibi</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ANA ALAN -->
   <div class="container">
-    <!-- Üst Bar -->
-    <header>
-      <div>
-        <h1>📚 9. Sınıf Tarih Performans & Süreç Değerlendirme</h1>
-        <p class="sub">MEB Maarif Modeli • Öğretmen, Öğrenci ve Veli Takip Portalı</p>
-      </div>
-      <div class="selectors">
-        <select id="classSelector">
-          <option value="ALL">Tüm Sınıflar</option>
-          <option value="9-A">9-A</option>
-          <option value="9-B">9-B</option>
-          <option value="9-C">9-C</option>
-          <option value="9-D">9-D</option>
-        </select>
-        <select id="roleSelector" class="role-sel">
-          <option value="teacher">Öğretmen Paneli</option>
-          <option value="student">Öğrenci Paneli</option>
-          <option value="parent">Veli Paneli</option>
-        </select>
-      </div>
-    </header>
 
-    <!-- ÖĞRETMEN GÖRÜNÜMÜ -->
-    <div id="view-teacher">
-      <div class="nav-tabs">
-        <button class="tab-btn active" id="btnTab1">📊 Ödev Havuzu</button>
-        <button class="tab-btn" id="btnTab2">🎯 MEB Kriterleri (Rubrik)</button>
-        <button class="tab-btn" id="btnTab3">📋 e-Okul Çizelgesi</button>
+    <!-- ================== 1. ÖĞRETMEN PORTALİ ================== -->
+    <div id="section-teacher">
+      <div class="tab-bar">
+        <button class="tab-item active" id="tb-overview" onclick="showSubTab('overview')">📊 Ödev Havuzu & Takip</button>
+        <button class="tab-item" id="tb-ai" onclick="showSubTab('ai')">✨ Yapay Zekâ Değerlendirici</button>
+        <button class="tab-item" id="tb-feedback" onclick="showSubTab('feedback')">💡 Yapıcı Geri Bildirim Modülü</button>
+        <button class="tab-item" id="tb-whatsapp" onclick="showSubTab('whatsapp')">💬 WhatsApp Dağıtım Merkezi</button>
+        <button class="tab-item" id="tb-eokul" onclick="showSubTab('eokul')">📋 e-Okul Not Çizelgesi</button>
+        <button class="tab-item" id="tb-rubric" onclick="showSubTab('rubric')">🎯 MEB Kriterleri (Rubrik)</button>
       </div>
 
-      <!-- Sayfa 1: Havuz -->
-      <div id="panel-overview">
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-title">Toplam Öğrenci</div><div class="stat-val" style="color:#fff;" id="statTotal">0</div></div>
-          <div class="stat-card"><div class="stat-title">Puanlanan Ödev</div><div class="stat-val" style="color:#34d399;" id="statDone">0</div></div>
-          <div class="stat-card"><div class="stat-title">Bekleyen Ödev</div><div class="stat-val" style="color:#fbbf24;" id="statWait">0</div></div>
-          <div class="stat-card"><div class="stat-title">Sınıf Ortalaması</div><div class="stat-val" style="color:#818cf8;" id="statAvg">0</div></div>
-        </div>
-
-        <div class="table-container">
-          <div class="table-header">
-            <strong>Öğrenci Performans Görevi Listesi</strong>
-            <button class="btn btn-primary" id="btnOpenNewStudent">+ Yeni Ödev Ekle</button>
+      <!-- 1.1 Genel Bakış & Havuz -->
+      <div id="sub-overview">
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-label">Toplam Kayıtlı Öğrenci</div>
+            <div class="stat-num" style="color:#fff;" id="numTotal">0</div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>No / Sınıf</th>
-                <th>Öğrenci</th>
-                <th>Ödev Başlığı</th>
-                <th>Durum</th>
-                <th>Not</th>
-                <th style="text-align:right;">İşlem</th>
-              </tr>
-            </thead>
-            <tbody id="studentTableBody"></tbody>
-          </table>
+          <div class="stat-box">
+            <div class="stat-label">Puanlanmış / Tamamlanmış</div>
+            <div class="stat-num" style="color:#34d399;" id="numGraded">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Değerlendirme Bekleyen</div>
+            <div class="stat-num" style="color:#fbbf24;" id="numPending">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Süreç Not Ortalaması</div>
+            <div class="stat-num" style="color:#818cf8;" id="numAverage">0</div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-top">
+            <h3>Öğrenci Performans Görevleri Listesi</h3>
+            <button class="btn btn-indigo" onclick="openNewHomeworkPrompt()">+ Yeni Ödev Girişi Yap</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>No / Şube</th>
+                  <th>Öğrenci Adı Soyadı</th>
+                  <th>Performans Görevi Konusu</th>
+                  <th>Durum</th>
+                  <th>Not</th>
+                  <th style="text-align:right;">İşlemler</th>
+                </tr>
+              </thead>
+              <tbody id="homeworkTableBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <!-- Sayfa 2: Rubrik -->
-      <div id="panel-rubric" style="display:none; background:#131c2e; padding:20px; border-radius:12px; border:1px solid #1e293b;">
-        <h3 style="margin-bottom:15px; color:#f59e0b;">🎯 9. Sınıf Tarih Dersi Değerlendirme Ölçeği</h3>
-        <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">• 1. Tarihsel Kaynak Analizi ve Eleştiri (25 Puan)</p>
-        <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">• 2. Neden-Sonuç İlişkisi Kurma & Anakronizmden Kaçınma (25 Puan)</p>
-        <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">• 3. Mekân Algısı ve Harita Yorumlama (20 Puan)</p>
-        <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">• 4. Tarihsel Kavram ve Terim Bilgisi (15 Puan)</p>
-        <p style="font-size:13px; color:#cbd5e1;">• 5. Takvime Uygunluk ve Sunum Tertibi (15 Puan)</p>
-      </div>
+      <!-- 1.2 Yapay Zekâ Değerlendirici -->
+      <div id="sub-ai" style="display:none;">
+        <div class="panel-card" style="padding:24px;">
+          <h3 style="margin-bottom:8px;">✨ Süreç Odaklı Yapay Zekâ Metin Analizi</h3>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Öğrencinin ödev metnini yapıştırarak anakronizmden uzaklık, kavram hâkimiyeti ve MEB kazanımlarına göre otomatik değerlendirme taslağı çıkarın.</p>
+          <div style="max-width:650px;">
+            <div class="form-field">
+              <label>Öğrenciyi Seçin</label>
+              <select id="aiSelectStudent"></select>
+            </div>
+            <div class="form-field">
+              <label>Analiz Edilecek Ödev Metni</label>
+              <textarea id="aiTextEntry" rows="5" placeholder="Öğrencinin hazırladığı araştırma veya makale metnini buraya yapıştırın..."></textarea>
+            </div>
+            <button class="btn btn-amber" onclick="executeAIAnalysis()">Analiz Et ve Puan Öner</button>
 
-      <!-- Sayfa 3: e-Okul -->
-      <div id="panel-eokul" style="display:none;" class="table-container">
-        <div class="table-header">
-          <strong>e-Okul Not Çizelgesi</strong>
-          <button class="btn btn-primary" onclick="window.print()">🖨️ Yazdır / PDF</button>
+            <div id="aiOutcomeCard" style="display:none; margin-top:16px; background:#0b1120; border:1px solid #4f46e5; border-radius:10px; padding:16px;">
+              <strong style="color:#fbbf24; display:block; margin-bottom:6px; font-size:13px;">Yapay Zekâ İnceleme Raporu:</strong>
+              <p id="aiOutcomeText" style="font-size:13px; line-height:1.6; color:#e2e8f0;"></p>
+            </div>
+          </div>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Öğrenci</th>
-              <th>Sınıf</th>
-              <th>1. Süreç</th>
-              <th>2. Süreç</th>
-              <th>e-Okul Notu</th>
-            </tr>
-          </thead>
-          <tbody id="eokulTableBody"></tbody>
-        </table>
+      </div>
+
+      <!-- 1.3 Yapıcı Geri Bildirim Modülü -->
+      <div id="sub-feedback" style="display:none;">
+        <div class="panel-card" style="padding:24px;">
+          <h3 style="margin-bottom:8px;">💡 Biçimlendirici Değerlendirme & Geri Bildirim Kütüphanesi</h3>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Öğrenciye sadece sayısal not vermek yerine tarihsel düşünme becerisini geliştiren hazır yapıcı ifadeler:</p>
+          <div class="grid-cards">
+            <div class="content-box">
+              <span style="color:#818cf8; font-weight:700; font-size:13px; display:block; margin-bottom:6px;">Kaynak İnceleme Becerisi</span>
+              <p style="font-size:12px; color:#cbd5e1; line-height:1.5;">"Birincil ve ikincil kaynaklar arasında kurduğun karşılaştırma son derece yetkin. Bir sonraki aşamada kaynak yazarının bakış açısını da sorgulamayı deneyebilirsin."</p>
+            </div>
+            <div class="content-box">
+              <span style="color:#fbbf24; font-weight:700; font-size:13px; display:block; margin-bottom:6px;">Anakronizm & Tarihsel Empati</span>
+              <p style="font-size:12px; color:#cbd5e1; line-height:1.5;">"Olayları değerlendirirken günümüz ahlak ve hukuk kalıplarından sıyrılarak dönemin yaşam koşullarını merkeze alman tarihsel empati düzeyinin geliştiğini gösteriyor."</p>
+            </div>
+            <div class="content-box">
+              <span style="color:#34d399; font-weight:700; font-size:13px; display:block; margin-bottom:6px;">Kavram & Terminoloji</span>
+              <p style="font-size:12px; color:#cbd5e1; line-height:1.5;">"Töre, kurultay ve kut anlayışı gibi temel kavramları metin içinde yerli yerinde kullanman konuya olan hâkimiyetini somutlaştırıyor."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.4 WhatsApp Dağıtım Merkezi -->
+      <div id="sub-whatsapp" style="display:none;">
+        <div class="panel-card" style="padding:24px;">
+          <h3 style="margin-bottom:8px;">💬 Sınıf Grupları WhatsApp İletişim Portalı</h3>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Seçili şubedeki öğrenci ve velilere tek dokunuşla teslim takvimi veya süreç bilgilendirme mesajı gönderin.</p>
+          <div style="max-width:600px;">
+            <div class="form-field">
+              <label>Toplu İletişim Mesajı</label>
+              <textarea id="broadcastInput" rows="4">Değerli Velilerimiz ve Sevgili Öğrencilerimiz, 9. Sınıf Tarih dersi 1. dönem performans süreci notları ve öğretmen geri bildirimleri sisteme girilmiştir. Sonuçları portaldan inceleyebilirsiniz.</textarea>
+            </div>
+            <button class="btn btn-emerald" onclick="triggerBroadcastWhatsApp()">WhatsApp ile Gruba Gönder</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.5 e-Okul Not Çizelgesi -->
+      <div id="sub-eokul" style="display:none;">
+        <div class="panel-card">
+          <div class="card-top">
+            <div>
+              <h3>📋 e-Okul Uyumlu Süreç Not Çizelgesi</h3>
+              <p style="font-size:12px; color:#94a3b8;">1. ve 2. Ders İçi Etkinliklere Katılım hanesine aktarılacak hazır liste.</p>
+            </div>
+            <button class="btn btn-indigo" onclick="window.print()">🖨️ Yazdır / PDF İndir</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Okul No</th>
+                  <th>Adı Soyadı</th>
+                  <th>Sınıf / Şube</th>
+                  <th>1. Süreç Notu</th>
+                  <th>2. Süreç Notu</th>
+                  <th>e-Okul Puanı</th>
+                </tr>
+              </thead>
+              <tbody id="eokulRecordsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.6 Rubrik / Kriter Kütüphanesi -->
+      <div id="sub-rubric" style="display:none;">
+        <div class="panel-card" style="padding:24px;">
+          <h3 style="margin-bottom:8px;">🎯 MEB 9. Sınıf Tarih Dersi Performans Ölçeği (Rubrik)</h3>
+          <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Türkiye Yüzyılı Maarif Modeli kapsamında 5 temel ölçüt üzerinden 100 puanlık dereceli puanlama anahtarı:</p>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div class="content-box" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#f8fafc; font-size:13px;">1. Tarihsel Kaynak Analizi ve Eleştiri</strong>
+                <p style="font-size:12px; color:#94a3b8; margin-top:2px;">Birincil ve ikincil kaynakların ayrımı, güvenilirlik ve kanıt temelli yaklaşım.</p>
+              </div>
+              <span style="background:rgba(217,119,6,0.2); color:#fbbf24; font-weight:800; font-size:13px; padding:6px 12px; border-radius:8px;">25 Puan</span>
+            </div>
+            <div class="content-box" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#f8fafc; font-size:13px;">2. Neden-Sonuç İlişkisi Kurma</strong>
+                <p style="font-size:12px; color:#94a3b8; margin-top:2px;">Olayların gelişimini dönemin şartlarına uygun şekilde, anakronizme düşmeden açıklayabilme.</p>
+              </div>
+              <span style="background:rgba(217,119,6,0.2); color:#fbbf24; font-weight:800; font-size:13px; padding:6px 12px; border-radius:8px;">25 Puan</span>
+            </div>
+            <div class="content-box" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#f8fafc; font-size:13px;">3. Mekân Algısı ve Harita Yorumlama</strong>
+                <p style="font-size:12px; color:#94a3b8; margin-top:2px;">Tarihsel haritaları ve coğrafi etkenleri metne yansıtabilme.</p>
+              </div>
+              <span style="background:rgba(217,119,6,0.2); color:#fbbf24; font-weight:800; font-size:13px; padding:6px 12px; border-radius:8px;">20 Puan</span>
+            </div>
+            <div class="content-box" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#f8fafc; font-size:13px;">4. Tarihsel Kavram ve Terminoloji Hâkimiyeti</strong>
+                <p style="font-size:12px; color:#94a3b8; margin-top:2px;">Dönemin kavramlarını (Töre, Kurultay, Kut vb.) doğru bağlamda kullanma.</p>
+              </div>
+              <span style="background:rgba(217,119,6,0.2); color:#fbbf24; font-weight:800; font-size:13px; padding:6px 12px; border-radius:8px;">15 Puan</span>
+            </div>
+            <div class="content-box" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#f8fafc; font-size:13px;">5. Takvime Uygunluk ve Sunum Tertibi</strong>
+                <p style="font-size:12px; color:#94a3b8; margin-top:2px;">Ödevin zamanında teslimi, kaynakça kurallarına uyum ve özenli sunum.</p>
+              </div>
+              <span style="background:rgba(217,119,6,0.2); color:#fbbf24; font-weight:800; font-size:13px; padding:6px 12px; border-radius:8px;">15 Puan</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- ÖĞRENCİ GÖRÜNÜMÜ -->
-    <div id="view-student" style="display:none; background:#131c2e; padding:20px; border-radius:12px; border:1px solid #1e293b;">
-      <h3 style="margin-bottom:15px;">👤 Öğrenci Ödev Gönderim Alanı</h3>
-      <div class="form-group"><label>Adınız Soyadınız & No</label><input type="text" id="s_name" placeholder="Örn: Yusuf Ziya - 320"></div>
-      <div class="form-group"><label>Ödev Konusu</label><input type="text" id="s_title" placeholder="Örn: Tarih Yazıcılığı ve Halil İnalcık"></div>
-      <div class="form-group"><label>Ödev Özeti</label><textarea id="s_text" rows="4"></textarea></div>
-      <button class="btn btn-primary" id="btnStudentSubmit">Ödevi Gönder</button>
+    <!-- ================== 2. ÖĞRENCİ PORTALİ ================== -->
+    <div id="section-student" style="display:none;">
+      <div class="panel-card" style="padding:24px; max-width:650px;">
+        <h3 style="margin-bottom:8px;">👤 Öğrenci Performans Görevi Gönderim Alanı</h3>
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Ödevinizi sisteme yükleyebilir, özetinizi yazarak öğretmeninizin değerlendirmesine sunabilirsiniz.</p>
+        <div class="form-field">
+          <label>Adınız Soyadınız & Okul No</label>
+          <input type="text" id="inStudentName" placeholder="Örn: Yusuf Ziya Öztürk - 412">
+        </div>
+        <div class="form-field">
+          <label>Şubeniz</label>
+          <select id="inStudentClass">
+            <option value="9-A">9-A</option>
+            <option value="9-B">9-B</option>
+            <option value="9-C">9-C</option>
+            <option value="9-D">9-D</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Ödev Konusu / Görev Başlığı</label>
+          <input type="text" id="inHomeworkTitle" placeholder="Örn: Kavimler Göçü'nün Sosyo-Kültürel Sonuçları">
+        </div>
+        <div class="form-field">
+          <label>Ödev Metni / Araştırma Özeti</label>
+          <textarea id="inHomeworkBody" rows="5" placeholder="Ödev metnini buraya ekleyin..."></textarea>
+        </div>
+        <button class="btn btn-indigo" onclick="dispatchStudentHomework()">Ödevi Sisteme İlet</button>
+      </div>
     </div>
 
-    <!-- VELİ GÖRÜNÜMÜ -->
-    <div id="view-parent" style="display:none; background:#131c2e; padding:20px; border-radius:12px; border:1px solid #1e293b;">
-      <h3 style="margin-bottom:15px;">🤝 Veli Bilgilendirme Portalı</h3>
-      <div id="parentList"></div>
+    <!-- ================== 3. VELİ PORTALİ ================== -->
+    <div id="section-parent" style="display:none;">
+      <div class="panel-card" style="padding:24px;">
+        <h3 style="margin-bottom:8px;">🤝 Veli Bilgilendirme ve Süreç Takip Portalı</h3>
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Öğrencinizin süreç odaklı ödev durumunu, aldığı puanı ve öğretmeninin bıraktığı dönütleri görüntüleyin.</p>
+        <div id="parentStudentFeed" class="grid-cards"></div>
+      </div>
     </div>
+
+    <!-- ================== 4. REHBERLİK (PDR) PORTALİ ================== -->
+    <div id="section-counselor" style="display:none;">
+      <div class="panel-card" style="padding:24px;">
+        <div class="card-top" style="padding:0 0 16px 0;">
+          <div>
+            <h3>🧠 Rehberlik & Öğrenci Gelişim Takip Portalı</h3>
+            <p style="font-size:12px; color:#94a3b8;">Zaman yönetimi veya akademik destek ihtiyacı duyan öğrencilerin gelişim süreçleri.</p>
+          </div>
+          <button class="btn btn-indigo" onclick="openCounselorPrompt()">+ Yeni Gözlem Notu</button>
+        </div>
+        <div id="counselorNotesDeck" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- PUANLAMA MODALI -->
-  <div class="modal-overlay" id="evalModal">
-    <div class="modal-box">
-      <div class="modal-title">
-        <span id="m_studentName">Ödevi Puanla</span>
-        <span style="cursor:pointer;" id="btnCloseModal">✕</span>
+  <div class="modal-backdrop" id="modalGrading">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="gradeTargetTitle">Ödevi Puanla</h4>
+        <button class="btn btn-slate" style="padding:4px 8px;" onclick="closeModal('modalGrading')">✕</button>
       </div>
-      <div class="form-group">
-        <label>Verilecek Not (0-100)</label>
-        <input type="number" id="m_score" min="0" max="100">
+      <div class="form-field">
+        <label>Verilecek Süreç Puanı (0 - 100 Arası)</label>
+        <input type="number" id="gradeScoreInput" min="0" max="100" placeholder="Örn: 90">
       </div>
-      <div class="form-group">
-        <label>Öğretmen Geri Bildirimi / Dönütü</label>
-        <textarea id="m_feedback" rows="3"></textarea>
+      <div class="form-field">
+        <label>Öğretmen Yapıcı Geri Bildirimi (Dönüt)</label>
+        <textarea id="gradeFeedbackInput" rows="4" placeholder="Kaynak analizi başarılı, kronolojiye dikkat edilmeli vb."></textarea>
       </div>
       <div style="display:flex; justify-content:flex-end; gap:8px;">
-        <button class="btn" style="background:#334155; color:#fff;" id="btnCancelModal">İptal</button>
-        <button class="btn btn-success" id="btnSaveEval">Kaydet</button>
+        <button class="btn btn-slate" onclick="closeModal('modalGrading')">İptal</button>
+        <button class="btn btn-emerald" onclick="submitEvaluationGrade()">Kaydet ve Yayınla</button>
       </div>
     </div>
   </div>
 
+  <!-- MÜFREDAT KILAVUZU MODALI -->
+  <div class="modal-backdrop" id="modalTextbook">
+    <div class="modal-content" style="max-width:620px;">
+      <div class="modal-header">
+        <h4>📖 9. Sınıf Tarih Dersi Maarif Modeli Öğretim Kılavuzu</h4>
+        <button class="btn btn-slate" style="padding:4px 8px;" onclick="closeModal('modalTextbook')">✕</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; font-size:13px; line-height:1.5;">
+        <div class="content-box">
+          <strong style="color:#fbbf24; display:block; margin-bottom:4px;">1. Ünite: Tarih ve Zaman</strong>
+          <p style="color:#cbd5e1;">Tarih biliminin yöntemi, birincil ve ikincil kaynaklar, Türklerin kullandığı takvimler (12 Hayvanlı Türk Takvimi, Hicri, Celali, Rumi, Miladi).</p>
+        </div>
+        <div class="content-box">
+          <strong style="color:#fbbf24; display:block; margin-bottom:4px;">2. Ünite: İnsanlığın İlk Dönemleri</strong>
+          <p style="color:#cbd5e1;">Yazının icadı, ilk devlet türleri, Mezopotamya, Mısır, Anadolu medeniyetleri ve ilk hukuk kuralları (Hammurabi, Urkagina).</p>
+        </div>
+        <div class="content-box">
+          <strong style="color:#fbbf24; display:block; margin-bottom:4px;">3. Ünite: İlk ve Orta Çağlarda Türk Dünyası</strong>
+          <p style="color:#cbd5e1;">Konargöçer yaşam tarzı, boylar birliği, Kurultay, Kut inancı, İkili teşkilat ve Kavimler Göçü'nün Avrupa'ya etkileri.</p>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+        <button class="btn btn-indigo" onclick="closeModal('modalTextbook')">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>MEB 2025-2026 9. Sınıf Tarih Dersi Performans Ödevi Değerlendirme & Biçimlendirici Süreç Sistemi</p>
+    <p style="margin-top:4px; font-family:monospace; color:#94a3b8;">9-A • 9-B • 9-C • 9-D Şubeleri</p>
+  </footer>
+
+  <!-- ÇALIŞTIRICI JAVASCRIPT KODLARI -->
   <script>
-    // Başlangıç verileri
-    var students = [
-      { id: "1", no: "102", classRoom: "9-A", name: "Mustafa Eren Aydemir", phone: "905321112233", title: "Tarih Yazıcılığı ve Metodoloji", status: "graded", score: 95, feedback: "Birincil kaynaklar çok iyi analiz edilmiş." },
-      { id: "2", no: "118", classRoom: "9-A", name: "Ayşe Yılmaz", phone: "905332223344", title: "Orta Asya Türk Göçleri", status: "pending", score: null, feedback: "" },
-      { id: "3", no: "205", classRoom: "9-B", name: "Mehmet Ali Kaya", phone: "905353334455", title: "Kadeş Antlaşması ve Diplomasi", status: "graded", score: 85, feedback: "Kronoloji başarılı, harita eklenebilir." },
-      { id: "4", no: "340", classRoom: "9-C", name: "Zeynep Demir", phone: "905364445566", title: "İslamiyet Öncesi Türk Töre Hukuku", status: "pending", score: null, feedback: "" },
-      { id: "5", no: "412", classRoom: "9-D", name: "Emre Can Çelik", phone: "905375556677", title: "Hammurabi Kanunları Analizi", status: "graded", score: 90, feedback: "Dönemin şartlarına göre çok iyi irdelenmiş." }
+    // Başlangıç Verileri
+    var studentsData = [
+      { id: "s1", no: "102", classRoom: "9-A", name: "Mustafa Eren Aydemir", phone: "905321112233", title: "Tarih Yazıcılığı ve Metodolojisi", status: "graded", score: 95, feedback: "Birincil ve ikincil kaynak ayrımı çok başarılı." },
+      { id: "s2", no: "118", classRoom: "9-A", name: "Ayşe Yılmaz", phone: "905332223344", title: "Orta Asya Türk Göçlerinin Coğrafi Sebepleri", status: "pending", score: null, feedback: "" },
+      { id: "s3", no: "205", classRoom: "9-B", name: "Mehmet Ali Kaya", phone: "905353334455", title: "Kadeş Antlaşması ve Diplomatik Metin İncelemesi", status: "graded", score: 85, feedback: "Tarihsel kronolojiye dikkat edilmiş, harita eklenebilir." },
+      { id: "s4", no: "340", classRoom: "9-C", name: "Zeynep Demir", phone: "905364445566", title: "İslamiyet Öncesi Türk Devletlerinde Töre Hukuku", status: "pending", score: null, feedback: "" },
+      { id: "s5", no: "412", classRoom: "9-D", name: "Emre Can Çelik", phone: "905375556677", title: "Mezopotamya Medeniyetlerinde Hukuk (Hammurabi Kanunları)", status: "graded", score: 90, feedback: "Kavram analizi ve karşılaştırma oldukça yetkin." }
     ];
 
-    var selectedEvalId = null;
+    var counselorData = [
+      { id: "c1", name: "Ayşe Yılmaz", tag: "Zaman Yönetimi", note: "Teslim takvimine uyum için çalışma planı oluşturuldu." },
+      { id: "c2", name: "Mustafa Eren Aydemir", tag: "Akademik İlgi", note: "Tarihsel kaynak analizi yarışmalarına yönlendirildi." }
+    ];
 
-    // Sayfa render fonksiyonu
-    function updateUI() {
-      var selClass = document.getElementById("classSelector").value;
+    var currentActiveEvalId = null;
+
+    function toast(text) {
+      var t = document.getElementById("toastNotice");
+      t.innerText = text;
+      t.style.display = "block";
+      setTimeout(function() { t.style.display = "none"; }, 3500);
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = "flex"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+    function changeRole(r) {
+      document.getElementById("section-teacher").style.display = (r === "teacher") ? "block" : "none";
+      document.getElementById("section-student").style.display = (r === "student") ? "block" : "none";
+      document.getElementById("section-parent").style.display = (r === "parent") ? "block" : "none";
+      document.getElementById("section-counselor").style.display = (r === "counselor") ? "block" : "none";
+
+      if (r === "parent") renderParentFeed();
+      if (r === "counselor") renderCounselorFeed();
+    }
+
+    function showSubTab(t) {
+      var tabs = ['overview', 'ai', 'feedback', 'whatsapp', 'eokul', 'rubric'];
+      for (var i = 0; i < tabs.length; i++) {
+        var key = tabs[i];
+        document.getElementById("sub-" + key).style.display = (key === t) ? "block" : "none";
+        document.getElementById("tb-" + key).className = (key === t) ? "tab-item active" : "tab-item";
+      }
+    }
+
+    function runFilter() {
+      var selClass = document.getElementById("mainClassSelect").value;
       var filtered = [];
-      for (var i = 0; i < students.length; i++) {
-        if (selClass === "ALL" || students[i].classRoom === selClass) {
-          filtered.push(students[i]);
+      for (var i = 0; i < studentsData.length; i++) {
+        if (selClass === "ALL" || studentsData[i].classRoom === selClass) {
+          filtered.push(studentsData[i]);
         }
       }
 
-      var done = 0, wait = 0, sum = 0;
+      var gradedCount = 0;
+      var pendingCount = 0;
+      var sumScore = 0;
+
       for (var j = 0; j < filtered.length; j++) {
         if (filtered[j].status === "graded") {
-          done++;
-          sum += filtered[j].score;
+          gradedCount++;
+          sumScore += filtered[j].score;
         } else {
-          wait++;
+          pendingCount++;
         }
       }
 
-      document.getElementById("statTotal").innerText = filtered.length;
-      document.getElementById("statDone").innerText = done;
-      document.getElementById("statWait").innerText = wait;
-      document.getElementById("statAvg").innerText = done > 0 ? (sum / done).toFixed(1) : "0";
+      document.getElementById("numTotal").innerText = filtered.length;
+      document.getElementById("numGraded").innerText = gradedCount;
+      document.getElementById("numPending").innerText = pendingCount;
+      document.getElementById("numAverage").innerText = gradedCount > 0 ? (sumScore / gradedCount).toFixed(1) : "0";
 
-      // Öğrenci Tablosu
-      var tbody = document.getElementById("studentTableBody");
+      // Tabloyu Yaz
+      var tb = document.getElementById("homeworkTableBody");
       var html = "";
       for (var k = 0; k < filtered.length; k++) {
-        var s = filtered[k];
+        var item = filtered[k];
         html += "<tr>" +
-          "<td><strong>" + s.no + "</strong> (" + s.classRoom + ")</td>" +
-          "<td>" + s.name + "</td>" +
-          "<td>" + s.title + "</td>" +
-          "<td>" + (s.status === "graded" ? "<span class='badge badge-ok'>Puanlandı</span>" : "<span class='badge badge-wait'>Bekliyor</span>") + "</td>" +
-          "<td style='font-weight:bold; color:#f59e0b;'>" + (s.score !== null ? s.score : "-") + "</td>" +
+          "<td><strong style='color:#fff;'>" + item.no + "</strong> <span style='font-size:11px; color:#94a3b8;'>(" + item.classRoom + ")</span></td>" +
+          "<td>" + item.name + "</td>" +
+          "<td>" + item.title + "</td>" +
+          "<td>" + (item.status === "graded" ? "<span class='badge badge-done'>Puanlandı</span>" : "<span class='badge badge-wait'>Bekliyor</span>") + "</td>" +
+          "<td style='font-weight:700; color:#fbbf24; font-size:14px;'>" + (item.score !== null ? item.score : "-") + "</td>" +
           "<td style='text-align:right;'>" +
-            "<button class='btn btn-primary btn-action' onclick='clickScore(\"" + s.id + "\")'>Puanla</button>" +
-            "<button class='btn btn-success' onclick='clickWhatsApp(\"" + s.phone + "\", \"" + s.name + "\", \"" + (s.score || 'Girilmedi') + "\")'>WhatsApp</button>" +
+            "<button class='btn btn-indigo' style='padding:5px 10px; margin-right:4px;' onclick='openGradingModal(\"" + item.id + "\")'>Puanla</button>" +
+            "<button class='btn btn-emerald' style='padding:5px 10px;' onclick='sendSingleWhatsApp(\"" + item.phone + "\", \"" + item.name + "\", \"" + (item.score || 'Girilmedi') + "\", \"" + (item.feedback || '') + "\")'>WhatsApp</button>" +
           "</td>" +
         "</tr>";
       }
-      tbody.innerHTML = html;
+      tb.innerHTML = html;
 
       // e-Okul Tablosu
-      var ebody = document.getElementById("eokulTableBody");
+      var etb = document.getElementById("eokulRecordsBody");
       var ehtml = "";
       for (var m = 0; m < filtered.length; m++) {
-        var itm = filtered[m];
+        var row = filtered[m];
         ehtml += "<tr>" +
-          "<td>" + itm.no + "</td><td>" + itm.name + "</td><td>" + itm.classRoom + "</td>" +
-          "<td>" + (itm.score !== null ? itm.score : "-") + "</td>" +
-          "<td>" + (itm.score !== null ? Math.min(100, itm.score + 5) : "-") + "</td>" +
-          "<td style='font-weight:bold; color:#f59e0b;'>" + (itm.score !== null ? itm.score : "Girilmedi") + "</td>" +
+          "<td>" + row.no + "</td>" +
+          "<td>" + row.name + "</td>" +
+          "<td>" + row.classRoom + "</td>" +
+          "<td>" + (row.score !== null ? row.score : "-") + "</td>" +
+          "<td>" + (row.score !== null ? Math.min(100, row.score + 5) : "-") + "</td>" +
+          "<td style='font-weight:700; color:#fbbf24;'>" + (row.score !== null ? row.score : "Girilmedi") + "</td>" +
         "</tr>";
       }
-      ebody.innerHTML = ehtml;
+      etb.innerHTML = ehtml;
+
+      // Yapay Zeka Öğrenci Seçicisi
+      var aiSel = document.getElementById("aiSelectStudent");
+      var aiOptions = "";
+      for (var a = 0; a < filtered.length; a++) {
+        aiOptions += "<option value='" + filtered[a].name + "'>" + filtered[a].name + " (" + filtered[a].classRoom + " - " + filtered[a].no + ")</option>";
+      }
+      aiSel.innerHTML = aiOptions;
     }
 
-    // Modal Fonksiyonları
-    window.clickScore = function(id) {
-      for (var i = 0; i < students.length; i++) {
-        if (students[i].id === id) {
-          selectedEvalId = id;
-          document.getElementById("m_studentName").innerText = students[i].name + " - Ödevini Puanla";
-          document.getElementById("m_score").value = students[i].score !== null ? students[i].score : "";
-          document.getElementById("m_feedback").value = students[i].feedback || "";
-          document.getElementById("evalModal").style.display = "flex";
+    function openGradingModal(id) {
+      for (var i = 0; i < studentsData.length; i++) {
+        if (studentsData[i].id === id) {
+          currentActiveEvalId = id;
+          document.getElementById("gradeTargetTitle").innerText = studentsData[i].name + " - Ödev Değerlendirme";
+          document.getElementById("gradeScoreInput").value = (studentsData[i].score !== null) ? studentsData[i].score : "";
+          document.getElementById("gradeFeedbackInput").value = studentsData[i].feedback || "";
+          openModal("modalGrading");
           break;
         }
       }
-    };
+    }
 
-    window.clickWhatsApp = function(phone, name, score) {
-      var text = "Sayın Velimiz, " + name + " isimli öğrencimizin Tarih Performans Notu: " + score + "/100 olarak sisteme işlenmiştir.";
-      window.open("https://api.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(text), "_blank");
-    };
+    function submitEvaluationGrade() {
+      var scoreVal = document.getElementById("gradeScoreInput").value;
+      var feedbackVal = document.getElementById("gradeFeedbackInput").value;
+      if (scoreVal === "" || isNaN(scoreVal) || Number(scoreVal) < 0 || Number(scoreVal) > 100) {
+        alert("Lütfen 0 ile 100 arasında geçerli bir puan giriniz.");
+        return;
+      }
+      for (var i = 0; i < studentsData.length; i++) {
+        if (studentsData[i].id === currentActiveEvalId) {
+          studentsData[i].score = Number(scoreVal);
+          studentsData[i].feedback = feedbackVal;
+          studentsData[i].status = "graded";
+          toast(studentsData[i].name + " için not ve dönüt kaydedildi!");
+          break;
+        }
+      }
+      closeModal("modalGrading");
+      runFilter();
+    }
 
-    // Olay Dinleyicileri (Event Listeners)
-    document.getElementById("classSelector").onchange = updateUI;
+    function sendSingleWhatsApp(phone, name, score, fb) {
+      var msg = "Sayın Velimiz, 9. Sınıf öğrencimiz " + name + "'in Tarih Dersi Performans görevi değerlendirilmiştir.\nNotu: " + score + "/100\nÖğretmen Değerlendirmesi: " + (fb || "Başarılı bir çalışma.");
+      window.open("https://api.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(msg), "_blank");
+      toast(name + " için WhatsApp mesajı oluşturuldu.");
+    }
 
-    document.getElementById("role
+    function triggerBroadcastWhatsApp() {
+      var txt = document.getElementById("broadcastInput").value;
+      window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(txt), "_blank");
+      toast("WhatsApp grup mesajı hazırlandı.");
+    }
+
+    function executeAIAnalysis() {
+      var text = document.getElementById("aiTextEntry").value.trim();
+      if (!text) {
+        alert("Lütfen incelenecek metni giriniz.");
+        return;
+      }
+      var studentName = document.getElementById("aiSelectStudent").value;
+      var out = "\"" + studentName + "\" tarafından sunulan çalışma incelendi: Metin içerisinde birincil kaynaklara atıf yapılmış, kronolojik sıra korunmuş ve anakronizmden kaçınılmıştır. Tavsiye edilen süreç notu: 90. Önerilen Geri Bildirim: Kavramsal çerçeve başarılı, kaynakça genişletilebilir.";
+      document.getElementById("aiOutcomeText").innerText = out;
+      document.getElementById("aiOutcomeCard").style.display = "block";
+      toast("Yapay zekâ analizi tamamlandı.");
+    }
+
+    function openNewHomeworkPrompt() {
+      var ad = prompt("Öğrenci Adı Soyadı:");
+      if (!ad) return;
+      var no = prompt("Okul Numarası:", "145");
+      var sube = prompt("Şube (9-A, 9-B vb.):", "9-A");
+      var baslik = prompt("Ödev Konusu:", "Tarih Bilimine Giriş ve Kaynaklar");
+      studentsData.unshift({
+        id: "s-" + Date.now(),
+        no: no || "0",
+        classRoom: sube || "9-A",
+        name: ad,
+        phone: "905551234567",
+        title: baslik || "Performans Görevi",
+        status: "pending",
+        score: null,
+        feedback: ""
+      });
+      toast(ad + " sisteme eklendi!");
+      runFilter();
+    }
+
+    function dispatchStudentHomework() {
+      var ad = document.getElementById("inStudentName").value.trim();
+      var sube = document.getElementById("inStudentClass").value;
+      var baslik = document.getElementById("inHomeworkTitle").value.trim();
+      if (!ad || !baslik) {
+        alert("Lütfen adınızı ve ödev konusunu yazınız.");
+        return;
+      }
+      studentsData.unshift({
+        id: "s-" + Date.now(),
+        no: "999",
+        classRoom: sube,
+        name: ad,
+        phone: "905551234567",
+        title: baslik,
+        status: "pending",
+        score: null,
+        feedback: ""
+      });
+      alert("Ödeviniz başarıyla iletildi!");
+      document.getElementById("inStudentName").value = "";
+      document.getElementById("inHomeworkTitle").value = "";
+      document.getElementById("inHomeworkBody").value = "";
+      document.getElementById("mainRoleSelect").value = "teacher";
+      changeRole("teacher");
+      runFilter();
+    }
+
+    function renderParentFeed() {
+      var feed = document.getElementById("parentStudentFeed");
+      var h = "";
+      for (var i = 0; i < studentsData.length; i++) {
+        var s = studentsData[i];
+        h += "<div class='content-box'>" +
+          "<div style='display:flex; justify-content:space-between; margin-bottom:6px;'>" +
+            "<div><strong style='color:#fff; font-size:14px;'>" + s.name + "</strong> <span style='font-size:11px; color:#94a3b8;'>(" + s.classRoom + " - " + s.no + ")</span></div>" +
+            (s.status === "graded" ? "<span class='badge badge-done'>" + s.score + " Puan</span>" : "<span class='badge badge-wait'>Bekliyor</span>") +
+          "</div>" +
+          "<p style='font-size:12px; color:#cbd5e1; margin-bottom:8px;'><strong>Ödev:</strong> " + s.title + "</p>" +
+          (s.feedback ? "<div style='background:#131d33; padding:8px; border-radius:6px; font-size:11px; color:#fbbf24;'><strong>Öğretmen Notu:</strong> " + s.feedback + "</div>" : "") +
+        "</div>";
+      }
+      feed.innerHTML = h;
+    }
+
+    function openCounselorPrompt() {
+      var ad = prompt("Öğrenci Adı:");
+      if (!ad) return;
+      var etiket = prompt("Gözlem Başlığı (Örn: Zaman Yönetimi):", "Süreç Takibi");
+      var not = prompt("Rehberlik Gözlem Notu:");
+      if (!not) return;
+      counselorData.unshift({
+        id: "c-" + Date.now(),
+        name: ad,
+        tag: etiket || "Gözlem",
+        note: not
+      });
+      toast("Rehberlik notu eklendi.");
+      renderCounselorFeed();
+    }
+
+    function renderCounselorFeed() {
+      var deck = document.getElementById("counselorNotesDeck");
+      var h = "";
+      for (var i = 0; i < counselorData.length; i++) {
+        var c = counselorData[i];
+        h += "<div class='content-box' style='display:flex; justify-content:space-between; align-items:flex-start;'>" +
+          "<div>" +
+            "<strong style='color:#fff; font-size:14px;'>" + c.name + "</strong>" +
+            "<p style='font-size:12px; color:#cbd5e1; margin-top:4px;'>" + c.note + "</p>" +
+          "</div>" +
+          "<span style='background:rgba(99,102,241,0.2); color:#818cf8; font-size:11px; font-weight:700; padding:4px 8px; border-radius:6px; border:1px solid rgba(99,102,241,0.3);'>" + c.tag + "</span>" +
+        "</div>";
+      }
+      deck.innerHTML = h;
+    }
+
+    // İlk Çalıştırma
+    runFilter();
+  </script>
+</body>
+</html>
